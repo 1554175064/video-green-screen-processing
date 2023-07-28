@@ -1,0 +1,26 @@
+{
+  "name": "video-green-screen-processing",
+  "version": "1.0.0",
+  "description": "视频扣绿处理为透明背景",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1554175064/video-green-screen-processing.git"
+  },
+  "keywords": [
+    "video",
+    "greenScreen"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/1554175064/video-green-screen-processing/issues"
+  },
+  "homepage": "https://github.com/1554175064/video-green-screen-processing#readme",
+  "dependencies": {
+    "three.js": "^0.77.1"
+  }
+}
