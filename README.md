@@ -4,7 +4,7 @@
 
 
 ```javascript
-new videoProcessing = new ProcessingVideo()
+const videoProcessing = new ProcessingVideo()
   /**
    * 开始扣绿
    * @param {string} inputVideoId 输入视频video标签 id
