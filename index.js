@@ -118,7 +118,7 @@ class ProcessingVideo {
     animate();
   }
   destory() {
-    this.playingDom.innerHTML = "";
+    this.playingDom?.innerHTML = "";
     if (this.scene) {
       this.renderer.dispose();
       this.renderer.forceContextLoss();
