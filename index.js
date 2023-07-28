@@ -68,7 +68,7 @@ class ProcessingVideo {
    *
    * @param {string} inputVideoId 输入视频video标签 id
    * @param {string} outputVideoId 输出视频dom id
-   * @param {string} color 要过滤的颜色 如0x00ff05
+   * @param {number} color 要过滤的颜色 如0x00ff05
    */
   initVideoScene(inputVideoId, outputVideoId, color) {
     this.playingDom = document.getElementById(outputVideoId);
