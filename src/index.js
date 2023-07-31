@@ -1,4 +1,5 @@
 "use strict";
+
 const THREE = require("three.js");
 const { vertexShader } = require("./shader/vertexShader.js");
 const { fragmentShader } = require("./shader/fragmentShader.js");
@@ -56,7 +57,6 @@ const ChromaKeyMaterial = function (
   });
 };
 ChromaKeyMaterial.prototype = Object.create(THREE.ShaderMaterial.prototype);
-
 class ProcessingVideo {
   video = null;
   renderer = null;
@@ -73,7 +73,10 @@ class ProcessingVideo {
   initVideoScene(inputVideoId, outputVideoId, color) {
     this.playingDom = document.getElementById(outputVideoId);
     this.videoSource = document.getElementById(inputVideoId);
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    this.renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true,
+    });
     this.renderer.setSize(
       this.playingDom.innerWidth,
       this.playingDom.innerHeight
@@ -118,7 +121,10 @@ class ProcessingVideo {
     animate();
   }
   destory() {
-    this.playingDom?.innerHTML = "";
+    if (this.playingDom) {
+      this.playingDom.innerHTML = "";
+      this.playingDom = null;
+    }
     if (this.scene) {
       this.renderer.dispose();
       this.renderer.forceContextLoss();
@@ -126,9 +132,7 @@ class ProcessingVideo {
       this.renderer = null;
       this.scene = null;
       this.camera = null;
-      this.playingDom = null;
     }
   }
 }
-
 module.exports = ProcessingVideo;
