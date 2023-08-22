@@ -16,7 +16,7 @@ var ChromaKeyMaterial = function ChromaKeyMaterial(domid, width, height, keyColo
   THREE.ShaderMaterial.call(this);
   var keyColorObject = new THREE.Color(keyColor);
   var video = document.getElementById(domid);
-  video.loop = true;
+  // video.loop = true;
   video.setAttribute("webkit-playsinline", "webkit-playsinline");
   video.setAttribute("playsinline", "playsinline");
   var videoTexture = new THREE.VideoTexture(video);
@@ -68,31 +68,12 @@ var ProcessingVideo = /*#__PURE__*/function () {
     _defineProperty(this, "scene", null);
     _defineProperty(this, "camera", null);
     _defineProperty(this, "playingDom", null);
+    _defineProperty(this, "videoSource", null);
+    _defineProperty(this, "movie", null);
   }
-  /**
-   *
-   * @param {string} inputVideoId 输入视频video标签 id
-   * @param {string} outputVideoId 输出视频dom id
-   * @param {number} color 要过滤的颜色 如0x00ff05
-   */
   _createClass(ProcessingVideo, [{
-    key: "initVideoScene",
-    value: function initVideoScene(inputVideoId, outputVideoId, color) {
-      var _this = this;
-      this.playingDom = document.getElementById(outputVideoId);
-      this.videoSource = document.getElementById(inputVideoId);
-      this.renderer = new THREE.WebGLRenderer({
-        antialias: true,
-        alpha: true
-      });
-      this.renderer.setSize(this.playingDom.innerWidth, this.playingDom.innerHeight);
-      this.playingDom.appendChild(this.renderer.domElement);
-      this.renderer.setClearColor(0xffffff, 0);
-      this.renderer.setSize(this.playingDom.clientWidth, this.playingDom.clientHeight);
-      this.scene = new THREE.Scene();
-      this.camera = new THREE.OrthographicCamera(-2, 2, 1.5, -1.5, 1, 10);
-      this.camera.position.set(0, 0, 1);
-      this.scene.add(this.camera);
+    key: "createVideoScene",
+    value: function createVideoScene(inputVideoId, color) {
       var movie;
       var movieGeometry;
       var movieMaterial;
@@ -103,18 +84,60 @@ var ProcessingVideo = /*#__PURE__*/function () {
       movie.position.set(0, 0, 0);
       movie.scale.set(1, 1, 1);
       movie.visible = false;
-      this.scene.add(movie);
-      var animate = function animate() {
-        if (!_this.renderer) {
-          return;
-        }
-        if (_this.videoSource.currentTime > 1 && movie.visible == false) {
-          movie.visible = true;
-        }
-        requestAnimationFrame(animate);
-        _this.renderer.render(_this.scene, _this.camera);
-      };
-      animate();
+      this.scene.remove(this.movie);
+      this.movie = movie;
+      this.scene.add(this.movie);
+    }
+    /**
+     *
+     * @param {string} inputVideoId 输入视频video标签 id
+     * @param {string} outputVideoId 输出视频dom id
+     * @param {number} color 要过滤的颜色 如0x00ff05
+     * @returns 开始播放的promise
+     */
+  }, {
+    key: "initVideoScene",
+    value: function initVideoScene(inputVideoId, outputVideoId, color) {
+      var _this = this;
+      return new Promise(function (res) {
+        _this.playingDom = document.getElementById(outputVideoId);
+        _this.renderer = new THREE.WebGLRenderer({
+          antialias: true,
+          alpha: true
+        });
+        _this.renderer.setSize(_this.playingDom.innerWidth, _this.playingDom.innerHeight);
+        _this.playingDom.appendChild(_this.renderer.domElement);
+        _this.renderer.setClearColor(0xffffff, 0);
+        _this.renderer.setSize(_this.playingDom.clientWidth, _this.playingDom.clientHeight);
+        _this.scene = new THREE.Scene();
+        _this.camera = new THREE.OrthographicCamera(-2, 2, 1.5, -1.5, 1, 10);
+        _this.camera.position.set(0, 0, 1);
+        _this.scene.add(_this.camera);
+        _this.createVideoScene(inputVideoId, color);
+        // this.scene.add(this.movie);
+        var animate = function animate() {
+          if (!_this.renderer) {
+            return;
+          }
+          if (_this.movie.visible == false) {
+            _this.movie.visible = true;
+            res();
+          }
+          requestAnimationFrame(animate);
+          _this.renderer.render(_this.scene, _this.camera);
+        };
+        animate();
+      });
+    }
+    /**
+     *
+     * @param {*} inputVideoId 更改的视频标签id
+     * @param {*} color 要过滤的颜色
+     */
+  }, {
+    key: "setVideoSource",
+    value: function setVideoSource(inputVideoId, color) {
+      this.createVideoScene(inputVideoId, color);
     }
   }, {
     key: "destory",
