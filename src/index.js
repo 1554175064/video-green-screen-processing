@@ -139,7 +139,7 @@ class ProcessingVideo {
   setVideoSource(inputVideoId, color) {
     this.createVideoScene(inputVideoId, color);
   }
-  destory() {
+  destroy() {
     if (this.playingDom) {
       this.playingDom.innerHTML = "";
       this.playingDom = null;

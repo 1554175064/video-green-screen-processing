@@ -140,8 +140,8 @@ var ProcessingVideo = /*#__PURE__*/function () {
       this.createVideoScene(inputVideoId, color);
     }
   }, {
-    key: "destory",
-    value: function destory() {
+    key: "destroy",
+    value: function destroy() {
       if (this.playingDom) {
         this.playingDom.innerHTML = "";
         this.playingDom = null;
