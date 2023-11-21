@@ -133,8 +133,8 @@ class ProcessingVideo {
   }
   /**
    *
-   * @param {*} inputVideoId 更改的视频标签id
-   * @param {*} color 要过滤的颜色
+   * @param {string} inputVideoId 更改的视频标签id
+   * @param {number} color 要过滤的颜色
    */
   setVideoSource(inputVideoId, color) {
     this.createVideoScene(inputVideoId, color);
