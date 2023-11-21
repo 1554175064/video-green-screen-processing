@@ -1,5 +1,5 @@
-declare module "index" {
-  export class ProcessingVideo {
+declare module "video-green-screen-processing" {
+  export default class ProcessingVideo {
     constructor();
     initVideoScene(
       inputVideoId: string,

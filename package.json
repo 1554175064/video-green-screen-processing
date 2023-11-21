@@ -1,8 +1,9 @@
 {
   "name": "video-green-screen-processing",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "description": "视频扣绿处理为透明背景",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "./node_modules/.bin/babel src -d dist && ncp src/index.d.ts dist/index.d.ts"
