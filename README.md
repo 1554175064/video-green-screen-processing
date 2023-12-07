@@ -8,7 +8,7 @@ const videoProcessing = new ProcessingVideo();
  * 开始扣绿
  * @param {string} inputVideoId 输入视频video标签 id
  * @param {string} outputVideoId 输出视频dom id
- * @param {number} color 要过滤的颜色 如0x00ff05
+ * @param {number | string} color 要过滤的颜色 如0x00ff05, #0000ff
  */
 videoProcessing.initVideoScene(inputVideoId, outputVideoId, color);
 

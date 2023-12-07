@@ -132,7 +132,7 @@ var ProcessingVideo = /*#__PURE__*/function () {
     /**
      *
      * @param {string} inputVideoId 更改的视频标签id
-     * @param {number} color 要过滤的颜色
+     * @param {number | string} color 要过滤的颜色
      */
   }, {
     key: "setVideoSource",
