@@ -1,26 +1,24 @@
-"use strict";
+import * as THREE from 'three'
+import vertexShader from "./shader/vertexShader.js";
+import fragmentShader from "./shader/fragmentShader.js";
 
-const THREE = require("three.js");
-const { vertexShader } = require("./shader/vertexShader.js");
-const { fragmentShader } = require("./shader/fragmentShader.js");
-const ChromaKeyMaterial = function (
-  domid,
-  width,
-  height,
-  keyColor,
-  filtertype
-) {
-  THREE.ShaderMaterial.call(this);
+const getShaderMaterial = (
+  domid: string,
+  width: number,
+  height: number,
+  keyColor: string | number,
+  filtertype: number
+) => {
   var keyColorObject = new THREE.Color(keyColor);
-  var video = document.getElementById(domid);
+  var video = document.getElementById(domid) as HTMLVideoElement;
   // video.loop = true;
-  video.setAttribute("webkit-playsinline", "webkit-playsinline");
-  video.setAttribute("playsinline", "playsinline");
-  var videoTexture = new THREE.VideoTexture(video);
+  video?.setAttribute("webkit-playsinline", "webkit-playsinline");
+  video?.setAttribute("playsinline", "playsinline");
+  var videoTexture = new THREE.VideoTexture(video!);
   videoTexture.minFilter = THREE.LinearFilter;
   videoTexture.format = THREE.RGBAFormat;
   var myuniforms = {
-    texture: {
+    pointTexture: {
       type: "t",
       value: videoTexture,
     },
@@ -49,62 +47,65 @@ const ChromaKeyMaterial = function (
       value: 0.8,
     },
   };
-  this.setValues({
+  return {
     uniforms: myuniforms,
     vertexShader: vertexShader,
     fragmentShader: fragmentShader,
     transparent: true,
-  });
+  };
 };
-ChromaKeyMaterial.prototype = Object.create(THREE.ShaderMaterial.prototype);
 class ProcessingVideo {
-  video = null;
-  renderer = null;
-  scene = null;
-  camera = null;
-  playingDom = null;
-  videoSource = null;
-  movie = null;
+  renderer: null | THREE.WebGLRenderer = null;
+  scene: null | THREE.Scene = null;
+  camera: null | THREE.OrthographicCamera = null;
+  playingDom: null | HTMLDivElement = null;
+  movie: THREE.Mesh | null = null;
   constructor() {}
-  createVideoScene(inputVideoId, color) {
-    var movie;
-    var movieGeometry;
-    var movieMaterial;
-    movieMaterial = new ChromaKeyMaterial(
+  createVideoScene(inputVideoId: string, color: string | number) {
+    var movie: THREE.Mesh;
+    var movieGeometry: THREE.PlaneGeometry;
+    const value = getShaderMaterial(
       inputVideoId,
-      this.playingDom.clientWidth,
-      this.playingDom.clientHeight,
+      this.playingDom?.clientWidth || 0,
+      this.playingDom?.clientHeight || 0,
       color,
       0
     );
+    var movieMaterial = new THREE.ShaderMaterial(value);
     movieGeometry = new THREE.PlaneGeometry(4, 3);
     movieMaterial.side = THREE.DoubleSide;
     movie = new THREE.Mesh(movieGeometry, movieMaterial);
     movie.position.set(0, 0, 0);
     movie.scale.set(1, 1, 1);
     movie.visible = false;
-    this.scene.remove(this.movie);
+    this.scene?.remove(this.movie!);
     this.movie = movie;
-    this.scene.add(this.movie);
+    this.scene?.add(this.movie!);
   }
   /**
    *
    * @param {string} inputVideoId 输入视频video标签 id
    * @param {string} outputVideoId 输出视频dom id
-   * @param {number} color 要过滤的颜色 如0x00ff05
+   * @param {number | string} color 要过滤的颜色 如0x00ff05
    * @returns 开始播放的promise
    */
-  initVideoScene(inputVideoId, outputVideoId, color) {
+  initVideoScene(
+    inputVideoId: string,
+    outputVideoId: string,
+    color: string | number
+  ) {
     return new Promise((res) => {
-      this.playingDom = document.getElementById(outputVideoId);
+      this.playingDom = document.getElementById(
+        outputVideoId
+      ) as HTMLDivElement;
       this.renderer = new THREE.WebGLRenderer({
         antialias: true,
         alpha: true,
       });
-      this.renderer.setSize(
-        this.playingDom.innerWidth,
-        this.playingDom.innerHeight
-      );
+      // this.renderer.setSize(
+      //   (this.playingDom as any).innerWidth,
+      //   (this.playingDom as any).innerHeight
+      // );
       this.playingDom.appendChild(this.renderer.domElement);
       this.renderer.setClearColor(0xffffff, 0);
       this.renderer.setSize(
@@ -121,12 +122,12 @@ class ProcessingVideo {
         if (!this.renderer) {
           return;
         }
-        if (this.movie.visible == false) {
+        if (this.movie?.visible == false) {
           this.movie.visible = true;
-          res();
+          res(null);
         }
         requestAnimationFrame(animate);
-        this.renderer.render(this.scene, this.camera);
+        this.renderer.render(this.scene!, this.camera!);
       };
       animate();
     });
@@ -136,7 +137,7 @@ class ProcessingVideo {
    * @param {string} inputVideoId 更改的视频标签id
    * @param {number | string} color 要过滤的颜色
    */
-  setVideoSource(inputVideoId, color) {
+  setVideoSource(inputVideoId: string, color: number | string) {
     this.createVideoScene(inputVideoId, color);
   }
   destroy() {
@@ -145,13 +146,15 @@ class ProcessingVideo {
       this.playingDom = null;
     }
     if (this.scene) {
-      this.renderer.dispose();
-      this.renderer.forceContextLoss();
-      this.renderer.domElement = null;
+      this.renderer?.dispose();
+      this.renderer?.forceContextLoss();
+      // this.renderer.domElement = null;
+
       this.renderer = null;
       this.scene = null;
       this.camera = null;
     }
   }
 }
-module.exports = ProcessingVideo;
+export default ProcessingVideo;
+

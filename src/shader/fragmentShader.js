@@ -1,6 +1,6 @@
-exports.fragmentShader = `
+export default `
       precision mediump float;
-      uniform sampler2D texture;
+      uniform sampler2D pointTexture;
       uniform sampler2D colorlut;
       uniform vec3 color;
       uniform float videowidth;
@@ -53,7 +53,7 @@ exports.fragmentShader = `
 
       void main()
       {
-      	gl_FragColor = texture2D( texture, vUv );
+      	gl_FragColor = texture2D( pointTexture, vUv );
       	//Greenscreen
       	float tola = 0.0;
       	float tolb = u_threshold/2.0;
@@ -73,16 +73,16 @@ exports.fragmentShader = `
       		gl_FragColor = vec4(gray,gray,gray , gl_FragColor.a);
       	}else if(filterType==2){
       		//模糊
-      		vec3 tColor2 = texture2D( texture, vec2(vUv[0]+(1.0/videowidth) , vUv[1]) ).rgb;
-      		vec3 tColor3 = texture2D( texture, vec2(vUv[0]-(1.0/videowidth) , vUv[1]) ).rgb;
-      		vec3 tColor4 = texture2D( texture, vec2(vUv[0]+(1.0/videowidth) , vUv[1]+(1.0/videoheight)) ).rgb;
-      		vec3 tColor5 = texture2D( texture, vec2(vUv[0]-(1.0/videowidth) , vUv[1]-(1.0/videoheight)) ).rgb;
-      		vec3 tColor6 = texture2D( texture, vec2(vUv[0]+(1.0/videowidth) , vUv[1]-(1.0/videoheight)) ).rgb;
-      		vec3 tColor7 = texture2D( texture, vec2(vUv[0]-(1.0/videowidth) , vUv[1]+(1.0/videoheight)) ).rgb;
-      		vec3 tColor8 = texture2D( texture, vec2(vUv[0] , vUv[1]+(1.0/videoheight)) ).rgb;
-      		vec3 tColor9 = texture2D( texture, vec2(vUv[0] , vUv[1]+(1.0/videoheight)) ).rgb;
-      		vec3 tColor10 = texture2D( texture, vec2(vUv[0]+(2.0/videowidth) , vUv[1]) ).rgb;
-      		vec3 tColor11 = texture2D( texture, vec2(vUv[0]+(2.0/videowidth) , vUv[1]) ).rgb;
+      		vec3 tColor2 = texture2D( pointTexture, vec2(vUv[0]+(1.0/videowidth) , vUv[1]) ).rgb;
+      		vec3 tColor3 = texture2D( pointTexture, vec2(vUv[0]-(1.0/videowidth) , vUv[1]) ).rgb;
+      		vec3 tColor4 = texture2D( pointTexture, vec2(vUv[0]+(1.0/videowidth) , vUv[1]+(1.0/videoheight)) ).rgb;
+      		vec3 tColor5 = texture2D( pointTexture, vec2(vUv[0]-(1.0/videowidth) , vUv[1]-(1.0/videoheight)) ).rgb;
+      		vec3 tColor6 = texture2D( pointTexture, vec2(vUv[0]+(1.0/videowidth) , vUv[1]-(1.0/videoheight)) ).rgb;
+      		vec3 tColor7 = texture2D( pointTexture, vec2(vUv[0]-(1.0/videowidth) , vUv[1]+(1.0/videoheight)) ).rgb;
+      		vec3 tColor8 = texture2D( pointTexture, vec2(vUv[0] , vUv[1]+(1.0/videoheight)) ).rgb;
+      		vec3 tColor9 = texture2D( pointTexture, vec2(vUv[0] , vUv[1]+(1.0/videoheight)) ).rgb;
+      		vec3 tColor10 = texture2D( pointTexture, vec2(vUv[0]+(2.0/videowidth) , vUv[1]) ).rgb;
+      		vec3 tColor11 = texture2D( pointTexture, vec2(vUv[0]+(2.0/videowidth) , vUv[1]) ).rgb;
       		gl_FragColor = vec4( (gl_FragColor.r+tColor2[0]+tColor3[0]+tColor4[0]+tColor5[0]+tColor6[0]+tColor7[0]+tColor8[0]+tColor9[0]+tColor10[0]+tColor11[0])/11.0,
       		(gl_FragColor.g+tColor2[1]+tColor3[1]+tColor4[1]+tColor5[1]+tColor6[1]+tColor7[1]+tColor8[1]+tColor9[1]+tColor10[1]+tColor11[1])/11.0,
       		(gl_FragColor.b+tColor2[2]+tColor3[2]+tColor4[2]+tColor5[2]+tColor6[2]+tColor7[2]+tColor8[2]+tColor9[2]+tColor10[2]+tColor11[2])/11.0,

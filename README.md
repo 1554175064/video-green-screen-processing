@@ -1,6 +1,7 @@
 # video-green-screen-processing
 
 将视频扣绿成透明背景
+基于 three@0.118.3 实现，高于 0.118.3 版本视频扣绿无感知切换视频源会失效
 
 ```javascript
 const videoProcessing = new ProcessingVideo();
