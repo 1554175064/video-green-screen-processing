@@ -1,4 +1,8 @@
-import * as THREE from 'three'
+import * as THREE from "three";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
+import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader.js";
 import vertexShader from "./shader/vertexShader.js";
 import fragmentShader from "./shader/fragmentShader.js";
 
@@ -11,7 +15,6 @@ const getShaderMaterial = (
 ) => {
   var keyColorObject = new THREE.Color(keyColor);
   var video = document.getElementById(domid) as HTMLVideoElement;
-  // video.loop = true;
   video?.setAttribute("webkit-playsinline", "webkit-playsinline");
   video?.setAttribute("playsinline", "playsinline");
   var videoTexture = new THREE.VideoTexture(video!);
@@ -54,13 +57,17 @@ const getShaderMaterial = (
     transparent: true,
   };
 };
+
 class ProcessingVideo {
   renderer: null | THREE.WebGLRenderer = null;
   scene: null | THREE.Scene = null;
   camera: null | THREE.OrthographicCamera = null;
   playingDom: null | HTMLDivElement = null;
   movie: THREE.Mesh | null = null;
+  composer: EffectComposer | null = null;
+
   constructor() {}
+
   createVideoScene(inputVideoId: string, color: string | number) {
     var movie: THREE.Mesh;
     var movieGeometry: THREE.PlaneGeometry;
@@ -82,17 +89,12 @@ class ProcessingVideo {
     this.movie = movie;
     this.scene?.add(this.movie!);
   }
-  /**
-   *
-   * @param {string} inputVideoId 输入视频video标签 id
-   * @param {string} outputVideoId 输出视频dom id
-   * @param {number | string} color 要过滤的颜色 如0x00ff05
-   * @returns 开始播放的promise
-   */
+
   initVideoScene(
     inputVideoId: string,
     outputVideoId: string,
-    color: string | number
+    color: string | number,
+    pixelRatio = 1
   ) {
     return new Promise((res) => {
       this.playingDom = document.getElementById(
@@ -102,22 +104,33 @@ class ProcessingVideo {
         antialias: true,
         alpha: true,
       });
-      // this.renderer.setSize(
-      //   (this.playingDom as any).innerWidth,
-      //   (this.playingDom as any).innerHeight
-      // );
+      this.renderer.setPixelRatio(window.devicePixelRatio); // 设置像素比率
       this.playingDom.appendChild(this.renderer.domElement);
       this.renderer.setClearColor(0xffffff, 0);
-      this.renderer.setSize(
-        this.playingDom.clientWidth,
-        this.playingDom.clientHeight
-      );
+
+      // 设置更高的分辨率
+      const width = this.playingDom.clientWidth * pixelRatio;
+      const height = this.playingDom.clientHeight * pixelRatio;
+      this.renderer.setSize(width, height, false);
+      this.renderer.domElement.style.width = `${this.playingDom.clientWidth}px`;
+      this.renderer.domElement.style.height = `${this.playingDom.clientHeight}px`;
+
       this.scene = new THREE.Scene();
       this.camera = new THREE.OrthographicCamera(-2, 2, 1.5, -1.5, 1, 10);
       this.camera.position.set(0, 0, 1);
       this.scene.add(this.camera);
+
       this.createVideoScene(inputVideoId, color);
-      // this.scene.add(this.movie);
+
+      // FXAA
+      this.composer = new EffectComposer(this.renderer);
+      const renderPass = new RenderPass(this.scene, this.camera);
+      this.composer.addPass(renderPass);
+
+      const fxaaPass = new ShaderPass(FXAAShader);
+      fxaaPass.uniforms["resolution"].value.set(1 / width, 1 / height);
+      this.composer.addPass(fxaaPass);
+
       const animate = () => {
         if (!this.renderer) {
           return;
@@ -127,19 +140,16 @@ class ProcessingVideo {
           res(null);
         }
         requestAnimationFrame(animate);
-        this.renderer.render(this.scene!, this.camera!);
+        this.composer!.render();
       };
       animate();
     });
   }
-  /**
-   *
-   * @param {string} inputVideoId 更改的视频标签id
-   * @param {number | string} color 要过滤的颜色
-   */
+
   setVideoSource(inputVideoId: string, color: number | string) {
     this.createVideoScene(inputVideoId, color);
   }
+
   destroy() {
     if (this.playingDom) {
       this.playingDom.innerHTML = "";
@@ -148,13 +158,11 @@ class ProcessingVideo {
     if (this.scene) {
       this.renderer?.dispose();
       this.renderer?.forceContextLoss();
-      // this.renderer.domElement = null;
-
       this.renderer = null;
       this.scene = null;
       this.camera = null;
     }
   }
 }
-export default ProcessingVideo;
 
+export default ProcessingVideo;
