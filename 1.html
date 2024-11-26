@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="./dist/index.js"></script>
+    <!-- <script src="./index.js"></script> -->
+</head>
+
+<body>
+    <video id="player1" muted autoplay src="./cb1f6ddc365b11eeaa76dfefc31bc2c5a9.mp4"
+        style="width: 10.8vh; height: 19.2vh; position: relative"></video>
+    <div id="player2" style="width: 10.8vh; height: 19.2vh; position: relative"></div>
+    <button onclick="init()">init</button>
+    <button onclick="set()">setUrl</button>
+    <button onclick="set2()">setUrl2</button>
+    <button onclick="pause()">pause</button>
+    <button onclick="play()">play</button>
+    <button onclick="show()">show</button>
+    <button onclick="des()">des</button>
+    <button onclick="test()">test</button>
+</body>
+<script>
+    const arr = [
+        "https://metagc-cdn.aminer.cn/3dcreator/cb1f6ddc365b11eeaa76dfefc31bc2c5a9.mp4",
+        "https://metagc-cdn.aminer.cn/3dcreator/84e9c77c365f11ee920edfefc36aa9e86.mp4",
+        "https://metagc-cdn.aminer.cn/3dcreator/ae191bfa365f11ee94a2dfefc3389f94e0.mp4",
+    ];
+
+
+    const play = () => {
+        const player = new ProcessingVideo();
+        player.initVideoScene('player1', 'player2', 0x0000ff, 2)
+    };
+
+</script>
+
+</html>

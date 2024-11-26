@@ -65,8 +65,11 @@ class ProcessingVideo {
   playingDom: null | HTMLDivElement = null;
   movie: THREE.Mesh | null = null;
   composer: EffectComposer | null = null;
+  pixelRatio: number = 1;
 
-  constructor() {}
+  constructor() {
+    this.onWindowResize = this.onWindowResize.bind(this);
+  }
 
   createVideoScene(inputVideoId: string, color: string | number) {
     var movie: THREE.Mesh;
@@ -97,9 +100,8 @@ class ProcessingVideo {
     pixelRatio = 1
   ) {
     return new Promise((res) => {
-      this.playingDom = document.getElementById(
-        outputVideoId
-      ) as HTMLDivElement;
+      this.pixelRatio = pixelRatio;
+      this.playingDom = document.getElementById(outputVideoId) as HTMLDivElement;
       this.renderer = new THREE.WebGLRenderer({
         antialias: true,
         alpha: true,
@@ -108,12 +110,7 @@ class ProcessingVideo {
       this.playingDom.appendChild(this.renderer.domElement);
       this.renderer.setClearColor(0xffffff, 0);
 
-      // 设置更高的分辨率
-      const width = this.playingDom.clientWidth * pixelRatio;
-      const height = this.playingDom.clientHeight * pixelRatio;
-      this.renderer.setSize(width, height, false);
-      this.renderer.domElement.style.width = `${this.playingDom.clientWidth}px`;
-      this.renderer.domElement.style.height = `${this.playingDom.clientHeight}px`;
+      this.updateRendererSize();
 
       this.scene = new THREE.Scene();
       this.camera = new THREE.OrthographicCamera(-2, 2, 1.5, -1.5, 1, 10);
@@ -128,7 +125,10 @@ class ProcessingVideo {
       this.composer.addPass(renderPass);
 
       const fxaaPass = new ShaderPass(FXAAShader);
-      fxaaPass.uniforms["resolution"].value.set(1 / width, 1 / height);
+      fxaaPass.uniforms["resolution"].value.set(
+        1 / (this.playingDom.clientWidth * pixelRatio),
+        1 / (this.playingDom.clientHeight * pixelRatio)
+      );
       this.composer.addPass(fxaaPass);
 
       const animate = () => {
@@ -143,7 +143,33 @@ class ProcessingVideo {
         this.composer!.render();
       };
       animate();
+
+      window.addEventListener("resize", this.onWindowResize, false);
     });
+  }
+
+  updateRendererSize() {
+    if (this.renderer && this.playingDom) {
+      const width = this.playingDom.clientWidth * this.pixelRatio;
+      const height = this.playingDom.clientHeight * this.pixelRatio;
+      this.renderer.setSize(width, height, false);
+      this.renderer.domElement.style.width = `${this.playingDom.clientWidth}px`;
+      this.renderer.domElement.style.height = `${this.playingDom.clientHeight}px`;
+
+      if (this.composer) {
+        this.composer.setSize(width, height);
+        const fxaaPass = this.composer.passes.find(
+          (pass) => pass instanceof ShaderPass
+        ) as ShaderPass;
+        if (fxaaPass && fxaaPass.uniforms["resolution"]) {
+          fxaaPass.uniforms["resolution"].value.set(1 / width, 1 / height);
+        }
+      }
+    }
+  }
+
+  onWindowResize() {
+    this.updateRendererSize();
   }
 
   setVideoSource(inputVideoId: string, color: number | string) {
@@ -162,6 +188,7 @@ class ProcessingVideo {
       this.scene = null;
       this.camera = null;
     }
+    window.removeEventListener("resize", this.onWindowResize, false);
   }
 }
 

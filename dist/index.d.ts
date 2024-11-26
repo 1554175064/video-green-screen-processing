@@ -7,9 +7,12 @@ declare class ProcessingVideo {
     playingDom: null | HTMLDivElement;
     movie: THREE.Mesh | null;
     composer: EffectComposer | null;
+    pixelRatio: number;
     constructor();
     createVideoScene(inputVideoId: string, color: string | number): void;
     initVideoScene(inputVideoId: string, outputVideoId: string, color: string | number, pixelRatio?: number): Promise<unknown>;
+    updateRendererSize(): void;
+    onWindowResize(): void;
     setVideoSource(inputVideoId: string, color: number | string): void;
     destroy(): void;
 }
