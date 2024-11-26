@@ -8,11 +8,12 @@ declare class ProcessingVideo {
     movie: THREE.Mesh | null;
     composer: EffectComposer | null;
     pixelRatio: number;
+    resizeObserver: ResizeObserver | null;
     constructor();
     createVideoScene(inputVideoId: string, color: string | number): void;
     initVideoScene(inputVideoId: string, outputVideoId: string, color: string | number, pixelRatio?: number): Promise<unknown>;
     updateRendererSize(): void;
-    onWindowResize(): void;
+    onDomResize(): void;
     setVideoSource(inputVideoId: string, color: number | string): void;
     destroy(): void;
 }

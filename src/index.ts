@@ -66,9 +66,10 @@ class ProcessingVideo {
   movie: THREE.Mesh | null = null;
   composer: EffectComposer | null = null;
   pixelRatio: number = 1;
+  resizeObserver: ResizeObserver | null = null;
 
   constructor() {
-    this.onWindowResize = this.onWindowResize.bind(this);
+    this.onDomResize = this.onDomResize.bind(this);
   }
 
   createVideoScene(inputVideoId: string, color: string | number) {
@@ -144,7 +145,8 @@ class ProcessingVideo {
       };
       animate();
 
-      window.addEventListener("resize", this.onWindowResize, false);
+      this.resizeObserver = new ResizeObserver(this.onDomResize);
+      this.resizeObserver.observe(this.playingDom);
     });
   }
 
@@ -168,7 +170,7 @@ class ProcessingVideo {
     }
   }
 
-  onWindowResize() {
+  onDomResize() {
     this.updateRendererSize();
   }
 
@@ -177,6 +179,10 @@ class ProcessingVideo {
   }
 
   destroy() {
+    if (this.resizeObserver && this.playingDom) {
+      this.resizeObserver.unobserve(this.playingDom);
+      this.resizeObserver = null;
+    }
     if (this.playingDom) {
       this.playingDom.innerHTML = "";
       this.playingDom = null;
@@ -188,7 +194,6 @@ class ProcessingVideo {
       this.scene = null;
       this.camera = null;
     }
-    window.removeEventListener("resize", this.onWindowResize, false);
   }
 }
 

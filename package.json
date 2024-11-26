@@ -1,6 +1,6 @@
 {
   "name": "video-green-screen-processing",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "视频扣绿处理为透明背景",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
