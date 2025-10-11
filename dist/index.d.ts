@@ -22,7 +22,7 @@ declare class UnifiedProcessingVideo {
     /**
      * 初始化入口，根据自动判定选择实现
      */
-    init(opts: ProcessingOpts): Promise<void>;
+    initVideoScene(opts: ProcessingOpts): Promise<void>;
     /**
      * 切换新的视频源或抠色色彩
      */

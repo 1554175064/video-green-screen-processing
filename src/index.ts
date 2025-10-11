@@ -464,7 +464,7 @@ class UnifiedProcessingVideo {
   /**
    * 初始化入口，根据自动判定选择实现
    */
-  async init(opts: ProcessingOpts) {
+  async initVideoScene(opts: ProcessingOpts) {
     this.opts = opts;
     this.renderType = opts.renderType ?? 'auto';
     await this.destroy(); // 先全部清理彻底
