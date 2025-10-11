@@ -9,7 +9,7 @@ type RenderType = 'three' | 'canvas2d' | 'auto'; // 支持三种渲染方案
 interface ProcessingOpts {
   inputVideoId: string; // 输入视频id
   outputVideoId: string; // 输出视频id
-  keyColor?: string; // 抠色颜色
+  keyColor?: string | number; // 抠色颜色
   threshold?: number; // 抠色容差（canvas2d有效）
   pixelRatio?: number; // 像素比
   enableFXAA?: boolean; // three.js专属参数

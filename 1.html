@@ -41,11 +41,11 @@
         player.initVideoScene({
             inputVideoId: 'player1',          // <video id="myvideo">
             outputVideoId: 'player2',          // <div id="output"></div>
-            keyColor: '#0000ff',              // 抠像色, 支持字符串 或 [r,g,b]
+            keyColor: 0x0000ff,              // 抠像色, 支持字符串 或 [r,g,b]
             threshold: 80,                    // 色键容差
-            pixelRatio: 3,                    // ThreeJS用
+            pixelRatio: 1,                    // ThreeJS用
             enableFXAA: false,                // ThreeJS用
-            renderType: 'canvas2d'                // 自动/ThreeJS/Canvas2d
+            renderType: 'auto'                // 自动/ThreeJS/Canvas2d
         })
     }
     const destroy = () => {

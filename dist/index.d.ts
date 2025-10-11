@@ -2,7 +2,7 @@ type RenderType = 'three' | 'canvas2d' | 'auto';
 interface ProcessingOpts {
     inputVideoId: string;
     outputVideoId: string;
-    keyColor?: string;
+    keyColor?: string | number;
     threshold?: number;
     pixelRatio?: number;
     enableFXAA?: boolean;

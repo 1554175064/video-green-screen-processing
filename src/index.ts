@@ -424,7 +424,7 @@ type RenderType = 'three' | 'canvas2d' | 'auto'; // 支持三种渲染方案
 interface ProcessingOpts {
   inputVideoId: string;
   outputVideoId: string;
-  keyColor?: string;            // 抠色颜色
+  keyColor?: string | number;   // 抠色颜色
   threshold?: number;           // 抠色容差
   pixelRatio?: number;          // 像素比
   enableFXAA?: boolean;         // three.js专属参数
@@ -482,12 +482,12 @@ class UnifiedProcessingVideo {
       // 使用Canvas2d方案
       this.canvas2dInstance = new CanvasVideoProcessing();
       let colorArr: [number, number, number];
-      if (typeof this.opts.keyColor === 'string') {
+      if (typeof this.opts.keyColor === 'string' || typeof this.opts.keyColor === 'number') {
         let color = new Color(this.opts.keyColor).getStyle();
         let arr = color.replace(/[^\d,]/g, '').split(',').map(Number) as [number, number, number];
         colorArr = arr;
       } else {
-        colorArr = (this.opts.keyColor as [number, number, number]) || [0, 255, 0];
+        colorArr = [0, 255, 0];
       }
       this.canvas2dInstance.init(
         this.opts.inputVideoId,
