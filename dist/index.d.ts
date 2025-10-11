@@ -1,20 +1,39 @@
-import * as THREE from "three";
-import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
-declare class ProcessingVideo {
-    renderer: null | THREE.WebGLRenderer;
-    scene: null | THREE.Scene;
-    camera: null | THREE.OrthographicCamera;
-    playingDom: null | HTMLDivElement;
-    movie: THREE.Mesh | null;
-    composer: EffectComposer | null;
-    pixelRatio: number;
-    resizeObserver: ResizeObserver | null;
-    constructor();
-    createVideoScene(inputVideoId: string, color: string | number): void;
-    initVideoScene(inputVideoId: string, outputVideoId: string, color: string | number, pixelRatio?: number): Promise<unknown>;
-    updateRendererSize(): void;
-    onDomResize(): void;
-    setVideoSource(inputVideoId: string, color: number | string): void;
-    destroy(): void;
+type RenderType = 'three' | 'canvas2d' | 'auto';
+interface ProcessingOpts {
+    inputVideoId: string;
+    outputVideoId: string;
+    keyColor?: string;
+    threshold?: number;
+    pixelRatio?: number;
+    enableFXAA?: boolean;
+    renderType?: RenderType;
 }
-export default ProcessingVideo;
+/**
+ * 视频特效/抠色处理统一入口，自动判别用Canvas或Three
+ */
+declare class UnifiedProcessingVideo {
+    private renderType;
+    private threejsInstance?;
+    private canvas2dInstance?;
+    private opts;
+    constructor();
+    /** 判定是否应该选择Three.js渲染 */
+    private shouldUseThree;
+    /**
+     * 初始化入口，根据自动判定选择实现
+     */
+    init(opts: ProcessingOpts): Promise<void>;
+    /**
+     * 切换新的视频源或抠色色彩
+     */
+    setVideoSource(inputVideoId: string, color?: string): Promise<void>;
+    /**
+     * 彻底销毁资源
+     */
+    destroy(): Promise<void>;
+    /**
+     * string颜色转RGB数组
+     */
+    private parseColor;
+}
+export default UnifiedProcessingVideo;

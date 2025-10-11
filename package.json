@@ -1,6 +1,6 @@
 {
   "name": "video-green-screen-processing",
-  "version": "1.2.3",
+  "version": "2.0.0",
   "description": "视频扣绿处理为透明背景",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -25,6 +25,7 @@
   "dependencies": {
     "babel-preset-es2015": "^6.24.1",
     "ncp": "^2.0.0",
+    "pixi.js": "^8.9.1",
     "three": "0.118.3",
     "three.js": "^0.77.1",
     "ts-loader": "^9.5.1",

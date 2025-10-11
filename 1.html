@@ -10,19 +10,20 @@
 </head>
 
 <body>
-    <video id="player1" muted autoplay src="https://metagc-cdn.aminer.cn/3dcreator/cb1f6ddc365b11eeaa76dfefc31bc2c5a9.mp4"
-        style="width: 10.8vh; height: 19.2vh; position: relative"></video>
-    <div id="player2" style="width: 10.8vh; height: 19.2vh; position: relative"></div>
-    <button onclick="init()">init</button>
-    <button onclick="set()">setUrl</button>
-    <button onclick="set2()">setUrl2</button>
-    <button onclick="pause()">pause</button>
-    <button onclick="play()">play</button>
-    <button onclick="show()">show</button>
-    <button onclick="des()">des</button>
-    <button onclick="test()">test</button>
+    <video id="player1" muted autoplay crossorigin="anonymous"
+        src="https://metagc-cdn.aminer.cn/3dcreator/cb1f6ddc365b11eeaa76dfefc31bc2c5a9.mp4"
+        style="width: 108px; height: 192px; position: relative"></video>
+    <video id="player3" muted autoplay crossorigin="anonymous"
+        src="https://metagc-cdn.aminer.cn/3dcreator/84e9c77c365f11ee920edfefc36aa9e86.mp4"
+        style="width: 108px; height: 192px; position: relative"></video>
+    <div id="player2" style="width: 108px; height: 192px; position: relative"></div>
+    <button onclick="start()">start</button>
+    <button onclick="set1()">set1</button>
+    <button onclick="set2()">set2</button>
+    <button onclick="destroy()">destroy</button>
 </body>
 <script>
+    let player = new ProcessingVideo()
     const arr = [
         "https://metagc-cdn.aminer.cn/3dcreator/cb1f6ddc365b11eeaa76dfefc31bc2c5a9.mp4",
         "https://metagc-cdn.aminer.cn/3dcreator/84e9c77c365f11ee920edfefc36aa9e86.mp4",
@@ -30,10 +31,26 @@
     ];
 
 
-    const play = () => {
-        const player = new ProcessingVideo();
-        player.initVideoScene('player1', 'player2', 0x0000ff, 2)
-    };
+    const set1 = () => {
+        player.setVideoSource('player3')
+    }
+    const set2 = () => {
+        player.setVideoSource('player1')
+    }
+    const start = () => {
+        player.init({
+            inputVideoId: 'player1',          // <video id="myvideo">
+            outputVideoId: 'player2',          // <div id="output"></div>
+            keyColor: '#0000ff',              // 抠像色, 支持字符串 或 [r,g,b]
+            threshold: 80,                    // 色键容差
+            pixelRatio: 3,                    // ThreeJS用
+            enableFXAA: false,                // ThreeJS用
+            renderType: 'canvas2d'                // 自动/ThreeJS/Canvas2d
+        })
+    }
+    const destroy = () => {
+        player.destroy()
+    }
 
 </script>
 
